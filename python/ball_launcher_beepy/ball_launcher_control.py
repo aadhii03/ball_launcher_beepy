@@ -47,10 +47,10 @@ class BallLauncherControl:
             self.conf = json.load(file)
 
         # initialize servo motor drivers
-        self.servo_driver1 = xOC03()
-        self.servo_driver1.init()
-        self.servo_driver2 = xOC05()
-        self.servo_driver2.init(50)  # 50 is probably frequency in Hz?
+        #self.servo_driver1 = xOC03()
+        #self.servo_driver1.init()
+        #self.servo_driver2 = xOC05()
+        #self.servo_driver2.init(50)  # 50 is probably frequency in Hz?
 
         self.set_state(phi, theta, top_left_motor, top_right_motor, bottom_motor)
 
@@ -58,10 +58,10 @@ class BallLauncherControl:
         self._set_off_ticks("ball_supply_push", 0.0)
 
         # initial position of stirrer
-        self._set_off_ticks("stirrer", 0.0)
+        #self._set_off_ticks("stirrer", 0.0)
 
         # TODO: What does this do?
-        self.servo_driver1.writePin(True)
+        #self.servo_driver1.writePin(True)
 
         try:
             # automatic motor reset after launching
@@ -92,7 +92,7 @@ class BallLauncherControl:
         self._set_off_ticks("stirrer", 0.0)
 
         # TODO: What does this do?
-        self.servo_driver1.writePin(False)
+        #self.servo_driver1.writePin(False)
 
     def set_state(
         self,
@@ -184,7 +184,7 @@ class BallLauncherControl:
                 self.conf["ticks"]["ball_supply_push"][1],
                 self.conf["launching_parameters"]["ball_supply_stroke_gain"],
             ):
-                self.servo_driver2.setServoPosition(
+                #self.servo_driver2.setServoPosition(
                     self.conf["channels"]["ball_supply_push"], tick
                 )
             self.launcher_ready_flag = False
@@ -242,8 +242,8 @@ class BallLauncherControl:
             ticks = self.conf["ticks"][quantity]
         tick = round(ticks[0] + v * (ticks[1] - ticks[0]))
 
-        self.servo_driver2.setServoPosition(channel, tick)
-
+        #self.servo_driver2.setServoPosition(channel, tick)
+	print(f"Servo: {tick}")
     def check_ball_supply(self) -> None:
         """Continuously checking ball supply sensor and sets stirring."""
         if self._stirr_sensor_available:
