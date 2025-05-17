@@ -27,11 +27,13 @@ class BallLauncherServer:
 
         while True:
             try:
+
                 # Wait for next request from client, NOBLOCK will raise EAGAIN if
                 # the event cannot be completed.
                 message = self.socket.recv(flags=zmq.NOBLOCK)
-                request = Request()
+                print("Connection established")
 
+                request = Request()
                 # Process message using protobuf
                 request.ParseFromString(message)
 

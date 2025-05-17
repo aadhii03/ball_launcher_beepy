@@ -4,6 +4,8 @@ import os
 import threading
 import typing
 import warnings
+import serial
+import time
 
 import numpy as np
 from scipy.interpolate import interp1d
@@ -12,6 +14,14 @@ from RPi import GPIO
 from xOC03 import xOC03  # TODO: Why do we import a module for a second servo driver?
 from xOC05 import xOC05
 
+baudrate=115200
+port = "/dev/ttyUSB0"
+
+try:
+    esp_serial = serial.Serial(port, baudrate)
+except serial.SerialException as e:
+    print(f"Error opening port: {e}")
+    exit()
 
 class BallLauncherControl:
     """Control of the ball launcher. Handles setting of PWM signals."""
@@ -47,10 +57,10 @@ class BallLauncherControl:
             self.conf = json.load(file)
 
         # initialize servo motor drivers
-        self.servo_driver1 = xOC03()
-        self.servo_driver1.init()
-        self.servo_driver2 = xOC05()
-        self.servo_driver2.init(50)  # 50 is probably frequency in Hz?
+        #self.servo_driver1 = xOC03()
+        #self.servo_driver1.init()
+        #self.servo_driver2 = xOC05()
+        #self.servo_driver2.init(50)  # 50 is probably frequency in Hz?
 
         self.set_state(phi, theta, top_left_motor, top_right_motor, bottom_motor)
 
@@ -61,7 +71,7 @@ class BallLauncherControl:
         self._set_off_ticks("stirrer", 0.0)
 
         # TODO: What does this do?
-        self.servo_driver1.writePin(True)
+        #self.servo_driver1.writePin(True)
 
         try:
             # automatic motor reset after launching
@@ -92,7 +102,7 @@ class BallLauncherControl:
         self._set_off_ticks("stirrer", 0.0)
 
         # TODO: What does this do?
-        self.servo_driver1.writePin(False)
+        #self.servo_driver1.writePin(False)
 
     def set_state(
         self,
@@ -182,11 +192,10 @@ class BallLauncherControl:
             for tick in np.arange(
                 self.conf["ticks"]["ball_supply_push"][0],
                 self.conf["ticks"]["ball_supply_push"][1],
-                self.conf["launching_parameters"]["ball_supply_stroke_gain"],
+                self.conf["launching_parameters"]["ball_supply_stroke_gain"]
             ):
-                #self.servo_driver2.setServoPosition(
-                    self.conf["channels"]["ball_supply_push"], tick
-                )
+                #self.servo_driver2.setServoPosition(self.conf["channels"]["ball_supply_push"], tick)
+                pass
             self.launcher_ready_flag = False
 
         def _timed_reset_ball_supply() -> None:
@@ -216,6 +225,8 @@ class BallLauncherControl:
             supply_timer.start()
 
         if self.automatic_motor_reset:
+            t_supply_reset = self.conf["times"]["t_supply_reset"]
+
             # turns motors off after launch
             t_reset_motors = self.conf["times"]["t_reset_motors"]
             t_reset_motors += t_supply_reset
@@ -242,8 +253,13 @@ class BallLauncherControl:
             ticks = self.conf["ticks"][quantity]
         tick = round(ticks[0] + v * (ticks[1] - ticks[0]))
 
-        self.servo_driver2.setServoPosition(channel, tick)
-	print(f"Servo: {tick}")
+        #self.servo_driver2.setServoPosition(channel, tick)
+	#print(f"Servo: {tick}")
+        message = f"{channel}:{tick}\n"
+        try:
+            esp_serial.write(message.encode())
+        except serial.SerialException as e:
+            logging.error(f"Serial write failed: {e}")
     def check_ball_supply(self) -> None:
         """Continuously checking ball supply sensor and sets stirring."""
         if self._stirr_sensor_available:
