@@ -63,7 +63,8 @@ class BallLauncherServer:
             except zmq.ZMQError as e:
                 if e.errno == zmq.EAGAIN:
                     # called when socket does not receive a message
-                    self.launcher.check_ball_supply()
+                    #self.launcher.check_ball_supply()
+                    pass
             except Exception:
                 # returns
                 self.socket.send(b"0")

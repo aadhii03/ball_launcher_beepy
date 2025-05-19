@@ -261,6 +261,7 @@ class BallLauncherControl:
             esp_serial.write(message.encode())
         except serial.SerialException as e:
             logging.error(f"Serial write failed: {e}")
+'''
     def check_ball_supply(self) -> None:
         """Continuously checking ball supply sensor and sets stirring."""
         if self._stirr_sensor_available:
@@ -270,3 +271,4 @@ class BallLauncherControl:
             else:
                 # stir balls
                 self._set_off_ticks("stirrer", 1.0)
+'''
