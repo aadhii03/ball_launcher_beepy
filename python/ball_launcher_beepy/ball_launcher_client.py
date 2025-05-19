@@ -54,6 +54,7 @@ class BallLauncherClient:
 
         # Get the reply
         message = self.socket.recv()
+        print(message)
         if message == "0":
             raise Exception("Ball launcher server failed to process SET_STATE request.")
 

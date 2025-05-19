@@ -98,7 +98,7 @@ def _execute() -> None:
     config = _dialog()
     if config is not None:
         _launch(config)
-    print()
+        print(config)
 
 
 if __name__ == "__main__":

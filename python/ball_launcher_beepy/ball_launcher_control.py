@@ -205,7 +205,7 @@ class BallLauncherControl:
 
         if self.stirring_after_launch:
             # stir balls
-            self._set_off_ticks("stirrer", 1.0)
+            self._set_off_ticks("stirrer", 0.0)
 
             # delayed reset of stirring
             stirring_time = self.conf["times"]["t_stirring"]
@@ -255,7 +255,8 @@ class BallLauncherControl:
 
         #self.servo_driver2.setServoPosition(channel, tick)
 	#print(f"Servo: {tick}")
-        message = f"{channel}:{tick}\n"
+        message = f"|{channel},{tick}|\n"
+        print(message)
         try:
             esp_serial.write(message.encode())
         except serial.SerialException as e:
