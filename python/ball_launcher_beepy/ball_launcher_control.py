@@ -10,9 +10,9 @@ import time
 import numpy as np
 from scipy.interpolate import interp1d
 
-from RPi import GPIO
-from xOC03 import xOC03  # TODO: Why do we import a module for a second servo driver?
-from xOC05 import xOC05
+#from RPi import GPIO
+#from xOC03 import xOC03  # TODO: Why do we import a module for a second servo driver?
+#from xOC05 import xOC05
 
 baudrate=115200
 port = "/dev/ttyUSB0"
@@ -27,7 +27,7 @@ class BallLauncherControl:
     """Control of the ball launcher. Handles setting of PWM signals."""
 
     def __init__(
-        self,
+         self,
         phi: float = 0.5,
         theta: float = 0.5,
         top_left_motor: float = 0.0,
@@ -261,14 +261,15 @@ class BallLauncherControl:
             esp_serial.write(message.encode())
         except serial.SerialException as e:
             logging.error(f"Serial write failed: {e}")
-'''
+
     def check_ball_supply(self) -> None:
         """Continuously checking ball supply sensor and sets stirring."""
         if self._stirr_sensor_available:
-            if not GPIO.input(self.conf["channels"]["stirr_sensor"]):
+            #if not GPIO.input(self.conf["channels"]["stirr_sensor"]):
                 # reset stirrer
-                self._set_off_ticks("stirrer", 0.0)
-            else:
+		if (esp_serial == 0):
+                	self._set_off_ticks("stirrer", 0.0)
+            	else:
                 # stir balls
-                self._set_off_ticks("stirrer", 1.0)
-'''
+                	self._set_off_ticks("stirrer", 1.0)
+
